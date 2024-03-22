@@ -1,4 +1,15 @@
 ## Essential Google Cloud Infrastructure: Foundation
+### Google Cloud integration
+
+Interacting with google cloud:
+•	Cloud console -> GUI
+•	Cloud sdk -> cloud cli, storage, bg (command line for bigquery)
+•	Api -> you can interact with them
+•	Cloud mobile app
+
+Console Cloud vs Cloud shell:
+Cloud console keeps track of the context, can use API Cloud to determine which operations are valid and can excute the most frequently activities on its own. Cloud Shell, on opposite, offers a more detailed way, with its commands, to accomplish the tasks.
+
 
 ### Virtual Private Cloud
 <img width="1200" src="https://user-images.githubusercontent.com/59575502/191574004-3892bf4c-6df8-4010-9190-15dff21945c5.png">

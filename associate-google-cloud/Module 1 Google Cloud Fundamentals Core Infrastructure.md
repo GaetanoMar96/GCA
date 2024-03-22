@@ -73,7 +73,7 @@ Google Cloud’s infrastructure is based in five major geographic locations: **N
 - There are **three** roles in IAM
   - Basic Cloud IAM role ( owner, editor, viewer, billing admin )
   - Predefined Cloud IAM role ( Instance Admin role - For compute engine access )
-  - Custom Cloud IAM role ( create your own ) -> ```not for folder level```
+  - Custom Cloud IAM role ( minimum amount of privileges, create your own ) -> ```not for folder level``` 
 
 ### Service accounts
 
@@ -134,6 +134,28 @@ Compute Engine provides machine type recommendations to help you optimize the re
 - There are no upfront investments.
 - VM contains the power and functionality of a full-fledged **operating system**.
 - Compute Engine has permission to ```terminate a job``` if its resources are needed elsewhere.
+- Can be configured such as a physical layer.
+
+Can be created using GC console, GC CLI or GC Engine API.
+Can build and run images of different OS.
+Compute engine bills by seconds, mith minimum cost by 1 minute.
+For specific quantities you can already buy vCPU and memory, cutting the costs.
+To save money there are Preemptible/Spot VM, but they cannot terminate a job if resources are required elvewhere like compute engine.
+
+Spot vs Preemptible:
+- More features vs Less features.
+- No max runtimes vs max 24 hrs.
+- Same pricing.
+
+Autoscaling and Load balancing
+VMs can be added or not based on the needs.
+Also there is the load balancing for the traffic
+
+VPCs have routing tables like physical networks, but they are integrated, eliminating the need for router management.
+Routing tables facilitate traffic routing within the same network, across subnets, and between Google Cloud zones without external IP addresses.
+Google Cloud provides a global distributed firewall for VPCs, controlling both inbound and outbound traffic.
+Firewall rules can be conveniently defined using network tags on Compute Engine instances.
+VPCs can communicate between multiple Google Cloud projects through VPC peering or via a shared VPC for enhanced IAM control.
 
 ### Cloud Load Balancing
 
@@ -142,12 +164,14 @@ Compute Engine provides machine type recommendations to help you optimize the re
 </p>
 
 The job of a load balancer is to distribute user traffic across multiple instances of an application. Cloud Load Balancing is a fully distributed, software-defined, managed service for all your traffic. The load balancers ```don’t run in VMs``` that you have to manage, you don’t have to worry about scaling or managing them. You can put Cloud Load Balancing in front of all of your traffic.
+It can balance the traffic on more compute engine regions
 Types of LB's
 - ```Global HTTP(S)``` -> For cross-regional load balancing for a web application
 - ```Global SSL Proxy``` -> For Secure Sockets Layer traffic that is not HTTP, use the Global SSL Proxy load balancer
 - ```Global TCP Proxy``` -> If it’s other TCP traffic that doesn’t use SSL
 - ```Regional``` -> You can still load balance across a Google Cloud region with the Regional load balancer
 - ```Regional Internal``` -> If you want to load balance traffic inside your project
+ ```Internal HTTP(S)``` -> If you want to load balance traffic on services globally distributed
 > Those last two proxy services only work for specific port numbers, and they only work for TCP
 
 ### Cloud DNS and Cloud CDN
@@ -155,6 +179,9 @@ DNS [(8.8.8.8)](https://dns.google/) is what translates Internet host names to a
 **Cloud DNS** lets you publish your zones and records in DNS without the burden of managing your own DNS servers and software. It offers both ```public zones``` and ```private``` managed DNS zones.
 
 ```Edge caching``` refers to the use of caching servers to store content closer to end users. 
+Cloud DNS is designed to automatically scale so customers can have thousands and mil- lions of addresses without concern for scaling the underlying infrastructure. Cloud DNS also provides for private zones that allow you to create custom names for your VMs if you need those.
+
+**Cloud CDN**
 Cloud **C**ontent **D**elivery **N**etwork ( To accelerate content delivery in your application ) 
 
 ### Connecting networks to Google VPC
@@ -162,10 +189,11 @@ Cloud **C**ontent **D**elivery **N**etwork ( To accelerate content delivery in y
 <img width="600" src="https://user-images.githubusercontent.com/59575502/189668789-a260eda3-3d46-49d1-882e-8c474c419846.png">
 </p>
 
-- ```IPsec VPN Protocol``` -> VPN over the Internet and use the IPsec VPN protocol to create a tunnel connection
+Establish connection between services, on cloud or on premise with gcloud services
+- ```IPsec VPN Protocol``` -> VPN over the Internet and use the IPsec VPN protocol to create a tunnel connection. So the vpn interconnects between the services. Cloud router to make the connection dynamic.
 - ```Direct Peering``` -> Putting a router in the same public data center as a google point of presence
 - ```Carrier Peering``` -> Gives you direct access from your on-premises network, through a service provider's network to google
-- ```Dedicated Interconnect``` -> Provides direct physical connections between your on-premises network and Google's network
+- ```Dedicated Interconnect``` -> Provides direct physical connections between your on-premises network and Google's network. It allows an agreement on service level
 - ```Partner Interconnect``` -> Useful if a data center is in a physical location that can't reach a Dedicated Interconnect co location facility.
 
 ---
@@ -175,7 +203,10 @@ Cloud **C**ontent **D**elivery **N**etwork ( To accelerate content delivery in y
 
 #### Cloud Storage ( object storage product )
 - Object storage for companies of all sizes. Store any amount of data. Retrieve it as often as you’d like.
-- Immutable and ```object versioning``` ( a new version is made with every change ) 
+- Objects are stored as binary data, and the same for metadata (such as a unique identifier)
+- The data are organized in buckets, each buckets requires an unique name and a geographical location
+- Immutable and ```object versioning``` ( a new version is made with every change ). Keep everything versioned or overwrite every time.
+- Keep track of who access data. most of time IAM is enough.
 - **Access Control Lists** (ACLs) = scope + permissions
 - **Lifecycle policies** (delete when you want)
 - **Advantages:**
@@ -186,13 +217,22 @@ Cloud **C**ontent **D**elivery **N**etwork ( To accelerate content delivery in y
 
 #### Types of storage classes: 
 - [Standard Storage](https://cloud.google.com/storage/docs/storage-classes#standard): Good for “hot” data that’s accessed frequently, including websites, streaming videos, and mobile apps.
-- [Nearline Storage](https://cloud.google.com/storage/docs/storage-classes#nearline): Low cost. Good for data that can be stored for at least 30 days, including data backup and long-tail multimedia content.
-- [Coldline Storage](https://cloud.google.com/storage/docs/storage-classes#coldline): Very low cost. Good for data that can be stored for at least 90 days, including disaster recovery.
+- [Nearline Storage](https://cloud.google.com/storage/docs/storage-classes#nearline): Low cost. Not frequently accessed data. Good for data that can be stored for at least 30 days, including data backup and long-tail multimedia content.
+- [Coldline Storage](https://cloud.google.com/storage/docs/storage-classes#coldline): Very low cost. Not frequently accessed data. Good for data that can be stored for at least 90 days, including disaster recovery.
 - [Archive Storage](https://cloud.google.com/storage/docs/storage-classes#archive): Lowest cost. Good for data that can be stored for at least 365 days, including regulatory archives.
 
+Common to al storages: Unlimited storage, worldwide access, low latency, uniform experience, geo redundancy
+Autoclass: transfer objects automatically based on the access model.
+Always data are encrypted before adding them on disk.
+#### Bring data to storage classes: 
+Online trasnfer using web
+Storage transfer service: consent transfer huge amount of data
+Transfer appliance
 
+Max unit for object 5 Tb
 #### Cloud SQL
 Cloud SQL offers fully managed relational databases, including MySQL, PostgreSQL, and SQL Server as a service.
+Store up to 64 Tb. Limited to which database instance is chosen.
 
 <p align="center">
 <img width="1000" src="https://user-images.githubusercontent.com/59575502/189688026-0878691d-61a0-4ff1-8af2-94c2f2bfa126.png">
@@ -201,6 +241,7 @@ Cloud SQL offers fully managed relational databases, including MySQL, PostgreSQL
 
 #### Cloud Spanner
 Cloud Spanner is a fully managed relational database service that scales horizontally, is strongly consistent, and speak SQL. Battle tested by Google's own mission critical applications and services, Spanner is the service that powers Google's $80 billion business.
+Petabytes
 
 <p align="center">
 <img width="1000" src="https://user-images.githubusercontent.com/59575502/189688386-40616eb5-70e4-4f7e-be16-c4481bd4191e.png">
@@ -209,10 +250,12 @@ Cloud Spanner is a fully managed relational database service that scales horizon
 
 #### Firestore
 Firestore is a flexible, horizontally scalable, ```NoSQL``` cloud database for mobile, web, and server development. With Firestore, data is stored in documents and then organized into collections. Documents can contain complex nested objects in addition to subcollections. Firestore’s NoSQL queries can then be used to retrieve individual, specific documents or to retrieve all the documents in a collection that match your query parameters. Queries can include multiple, chained filters and combine filtering and sorting options. 
+Terabytes
 
 #### Cloud Bigtable
 
 Cloud Bigtable is Google's NoSQL Big data database service. Bigtable is designed to handle massive workloads at consistent low latency and high throughput. So it's a great choice for both operational and analytical applications including internet of things, user analytics, and financial data analysis.
+Petabytes
 
 <p align="center">
 <img width="1200" src="https://user-images.githubusercontent.com/59575502/189877918-42ff8119-2938-4b76-a35c-31fc4d25f9df.png">
