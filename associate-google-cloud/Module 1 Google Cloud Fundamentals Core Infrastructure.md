@@ -89,7 +89,7 @@ What if you want to give permissions to a Compute Engine virtual machine, rather
 - Usage of Active Directory or LDAP ( If anyone joins/leaves the org )
 
 ### Interacting with Google Cloud
-- Cloud Console
+- Cloud Console (GUI, check resource, set budget, search to find resources)
 - Cloud SDK in Cloud Shell ( ```gcloud```, ```gsutil``` for cloud storage, ```bq``` for big query )
 - APIs ([Google APIs Explorer](https://developers.google.com/apis-explorer))
 - Cloud Console Mobile App
@@ -267,6 +267,7 @@ Petabytes
 <p align="center">
 <img width="1200" src="https://user-images.githubusercontent.com/59575502/189879270-586bc06d-1084-477b-be2c-39f5c384981c.jpg">
 </p>
+Kuberntes is a set of api. A kubernetes bd is a set of containers.
 A Pod is the smallest unit in Kubernetes that you can create or deploy. It represents a running process on your cluster as either a component of replication or an entire app.
 
 - ```kubectl run``` -> Starts a deployment with a container running inside a Pod.
@@ -277,19 +278,15 @@ A Pod is the smallest unit in Kubernetes that you can create or deploy. It repre
 
 ### Google Kubernetes Engine
 GKE is a Google-hosted managed Kubernetes service in the Cloud.
+Create a kubernetes cluster using cloud console or gcloud command.
+Provides the mechanism on how you interact with cluster, seting polices, monitoring etc...
+The resources for the creation of a cluster come from the compute engine.
 ```gcloud container clusters create k1``` -> To start up kubernetes is on a cluster in GKE.
 
 <p align="center">
  <img width="1200" src="https://user-images.githubusercontent.com/59575502/189883468-98e9f52e-9746-4a6f-b28d-8001ea12b95f.jpg">
 </p>
 
-### Anthos
-
-<img align = "left" width="600" src="https://user-images.githubusercontent.com/59575502/189885982-03b1576b-fcff-4be6-9bc2-a6111e834361.png">
-
-- Anthos is a ```hybrid and multi cloud``` solution powered by the latest innovations in distributed systems and service management software from Google.
-- The Anthos framework rests on ```Kubernetes``` and ```GKE On-Prem```.
-- Anthos also provides a rich set of tools for ```monitoring and maintaining``` the consistency of your applications across all of your network, whether on premises in the cloud or in multiple clouds.
 
 ### Development in the cloud
 #### Cloud Source Repositories
@@ -301,6 +298,18 @@ Cloud Source Repositories provides full featured Git repositories hosted on Goog
 - Event driven serverless compute platform.
 - Scales automatically.
 - Cloud Functions allows you to **trigger** your code from Google Cloud, Firebase, and Google Assistant, or call it directly from any web, mobile, or backend application via HTTP. You are only billed for your function's execution time, metered to the nearest 100 milliseconds. You pay nothing when your function is idle.
+
+#### Cloud Run
+
+<p align="center">
+<img width="1200" src="https://user-images.githubusercontent.com/59575502/191254270-18bd34ba-8455-4c86-a30b-0b9ad0834e3c.png">
+</p>
+
+- Can allocate up to ```four vCPUs``` and ```eight gigabytes of memory```
+- Once you've deployed your container image, you'll get a unique ```HTTPS URL``` back. Cloud Run then starts your container on demand to handle requests, and ensures that all incoming requests are handled by **dynamically adding and removing containers**
+- With Cloud Run, You can use a ```container-based``` workflow as well as a ```source-based``` workflow. </br>
+```Buildpacks``` -> Cloud Run then builds your source and packages the application into a container image for you
+- Pulls images from docker and artifact registry
 
 ### Applications in the cloud
 #### App Engine
@@ -315,6 +324,14 @@ There are two types of [App Engine environments](https://cloud.google.com/appeng
 <img width="600" align="right" src="https://user-images.githubusercontent.com/59575502/191240058-785474cd-8e29-4b1d-99fa-a1d980594195.png">
 </p>
 
+#### Anthos
+
+<img align = "left" width="600" src="https://user-images.githubusercontent.com/59575502/189885982-03b1576b-fcff-4be6-9bc2-a6111e834361.png">
+
+- Anthos is a ```hybrid and multi cloud``` solution powered by the latest innovations in distributed systems and service management software from Google.
+- The Anthos framework rests on ```Kubernetes``` and ```GKE On-Prem```.
+- Anthos also provides a rich set of tools for ```monitoring and maintaining``` the consistency of your applications across all of your network, whether on premises in the cloud or in multiple clouds.
+
 #### Google Cloud API management tools
 - Cloud Endpoints
 - Apigee Edge
@@ -327,17 +344,6 @@ There are two types of [App Engine environments](https://cloud.google.com/appeng
 <p align="center">
  <img width="1200" src="https://user-images.githubusercontent.com/59575502/191251989-00f56449-e825-4b46-abd1-84d185e676d2.png">
 </p>
-
-#### Cloud Run
-
-<p align="center">
-<img width="1200" src="https://user-images.githubusercontent.com/59575502/191254270-18bd34ba-8455-4c86-a30b-0b9ad0834e3c.png">
-</p>
-
-- Can allocate up to ```four vCPUs``` and ```eight gigabytes of memory```
-- Once you've deployed your container image, you'll get a unique ```HTTPS URL``` back. Cloud Run then starts your container on demand to handle requests, and ensures that all incoming requests are handled by **dynamically adding and removing containers**
-- With Cloud Run, You can use a ```container-based``` workflow as well as a ```source-based``` workflow. </br>
-```Buildpacks``` -> Cloud Run then builds your source and packages the application into a container image for you
 
 ### Logging and Monitoring in the Cloud
 There are **four golden signals** that measure a system's performance and reliability.

@@ -12,12 +12,30 @@ Cloud console keeps track of the context, can use API Cloud to determine which o
 
 
 ### Virtual Private Cloud
+
+Projects: key resource to organize resources in GC. A project associate objects and services to billing.
+<div align="center">
+<img width="1200" src="assets/module_2/projects.png">
+</div>
+
 <img width="1200" src="https://user-images.githubusercontent.com/59575502/191574004-3892bf4c-6df8-4010-9190-15dff21945c5.png">
+Vpc provide ip addresses for internal and external use.
+In an auto mode network, one subnet from each region is automatically created within it. The default network is actually an auto mode network. 
+These automatically created subnets use a set of predefined IP ranges with a /20 mask that can be expanded to /16. 
+Therefore, as new Google Cloud regions become available, new subnets in those regions are automatically added to auto mode networks using an IP range from that block.
+A custom mode network does not automatically create subnets. This type of network provides you with complete control over its subnets and IP ranges. You decide which subnets to create, in regions you choose, and using IP ranges you specify. 
+These IP ranges cannot overlap between subnets of the same network.
+Now, you can convert an auto mode network to a custom mode network to take advantage of the control that custom mode networks provide. 
+However, this conversion is one way, meaning that custom mode networks cannot be changed to auto mode networks. 
+
+Services can communicate with each other and with other on premise services leveraging on VPC.
+
 <img width="1200" src="https://user-images.githubusercontent.com/59575502/191574014-f6b074b9-e304-4901-aa6f-f21c0affaa6b.png">
 
-- Every subnet has ```four reserved IP addresses```
+- Every subnet has ```four reserved IP addresses``` in its primary IP address
 - Notice that the **first and second** addresses in the range, .0 and .1, are reserved for the ```network``` and the ```subnet's gateway```, respectively.
 - The **second-to-last** address in the range and the **last address**, which are reserved as the ```broadcast``` address.
+- Even if 2 VM are in different regions, they can still communicate using the subnet IP, because subnet are cross zones.
 
 ### IP Address
 An ```ephemeral IP``` address is an IP address that doesn't persist beyond the life of the resource. For example, when you create an instance or forwarding rule without specifying an IP address, Google Cloud automatically assigns the resource an ephemeral IP address.
@@ -28,6 +46,7 @@ An ```ephemeral IP``` address is an IP address that doesn't persist beyond the l
 
 <img width="1200" src="https://user-images.githubusercontent.com/59575502/191577028-7422d839-aaae-4b41-ac34-f4023006037d.png">
 
+- GC has 2 type of DNS, Zonal and Global
 - If you **delete and recreate** an instance, the ```internal IP``` address can change. This change can disrupt connections from other Compute Engine resources, which must obtain the new IP address before they can connect again.
 - DNS name always ```points to a specific instance```, no matter what the internal IP address is. Each instance has a ```metadata server``` that also acts as a ```DNS resolver``` for that instance. The metadata server handles all DNS queries for local network resources and routes all other queries to Google's public DNS servers for public name resolution. 
 - Instance is not aware of any ```external IP``` address assigned to it. Instead, the network stores a ```lookup table``` that **matches external IP addresses with the internal IP addresses** of the relevant instances.
@@ -42,7 +61,7 @@ An ```ephemeral IP``` address is an IP address that doesn't persist beyond the l
 
 <img width="500" align="right" src="https://user-images.githubusercontent.com/59575502/191580492-6223a4c4-303c-4dc9-85e2-158fb0c234ce.svg">
 
-> If you have multiple services running on a VM, and you want to assign a different IP address to each service.
+> If you have multiple services running on a VM, and you want to assign a different IP address to each service. You can configure an alias without creating a new network.
 
 All subnets have a primary ```CIDR``` range, which is the range of internal IP addresses that define the subnet. Each VM instance gets its primary internal IP address from this range. You can also allocate alias IP ranges from that primary range, or you can add a secondary range to the subnet and allocate alias IP ranges from the secondary range. Use of alias IP ranges does not require secondary subnet ranges. These secondary subnet ranges merely provide an ```organizational tool```.
 
@@ -61,7 +80,7 @@ A route is created when a subnet is created. This is what enables VMs on the sam
 - Each ```VPC``` network acts as a ```distributed firewall``` -> by default it will handle filtering traffic.
 > Ex - Applying firewall rules to tagged instances (connections are allowed at per instance basis)
 
-#### Firewall rule is madeup of 4 things,
+#### Firewall rule is madeup of:
 ```
 gcloud compute
 firewall-rules create
@@ -70,11 +89,18 @@ direction=INGRESS --
 allow=TCP 22 --
 target-tags=red-tag
 ```
-- ```action``` (allow or deny traffic)
+
 - ```direction``` (ingress or egress) -> not both simultaniously
+- ```source or destination``` ingress direction -> source is part of IP address, egress direction -> destination is part of IP address
 - ```typre of protocol, ports``` (tcp,udp,icmp)
-- ```target``` (spource or destination the rule applies)
+- ```action``` (allow or deny traffic)
+- ```priority``` governs the order in which rules are evaluetad
+- ```rule assignment``` 
 > Each firewall rule can contain either IPv4 or IPv6 ranges, but not both.
+
+Ingress vs egress rules:
+Ingress firewall rules protect against incoming connections to the instance from any source. Ingress allow rules allow specific protocol, ports, and IP addresses to connect in. 
+Egress firewall rules control outgoing connections originated inside your Google Cloud network. Egress allow rules allow outbound connections that match specific protocol, ports, and IP addresses
 
 You can apply a firewall rule,
 - To all instances in a network
@@ -82,6 +108,15 @@ You can apply a firewall rule,
 - Instances using service accounts
 > Only supports ```IPV4``` connections. IPv6 connections are also supported in VPC networks that have IPv6 enabled.
 cannot share among networks.
+
+When a VM is created the ephemeral external IP address is assigned from a pool. There is no way to predict which address will be assigned, so there is no way to write a rule that will match that VM's IP address before it is assigned. Tags allow a symbolic assignment that does not depend on order in the IP addresses.
+
+### Pricing
+
+<div align="center">
+<img width="1200" src="assets/module_2/pricing.png">
+</div>
+
 
 ### [Stateful](https://cloud.google.com/vpc/docs/firewalls#specifications)
 VPC firewall rules are ```stateful``` -> when a connection is allowed through firewall in either direction, return traffic matching the connection also allowed. You cannot configure a firewall rule to deny associated response traffic.
