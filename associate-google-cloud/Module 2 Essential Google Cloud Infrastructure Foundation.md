@@ -10,6 +10,9 @@ Interacting with google cloud:
 Console Cloud vs Cloud shell:
 Cloud console keeps track of the context, can use API Cloud to determine which operations are valid and can excute the most frequently activities on its own. Cloud Shell, on opposite, offers a more detailed way, with its commands, to accomplish the tasks.
 
+When you run gcloud on your own machine, the config settings are persisted across sessions. But in Cloud Shell, you need to set this for every new session or reconnection.
+
+Use SSH to perform some admin tasks on the VM. While it is running you can monitor CPU, disk and network load
 
 ### Virtual Private Cloud
 
@@ -185,7 +188,28 @@ Predefined or custom machine types:
       - Local SSD
       - Cloud Storage
   - Networking
+  - Autoscaling
   - Linux or windows
+
+Tensor Processing Unit, or TPU. TPUs are Google’s custom-developed application-specific integrated circuits (ASICs) used to accelerate machine learning workloads.
+TPUs act as domain-specific hardware, as opposed to general-purpose hardware with CPUs and GPUs. This allows for higher efficiency by tailoring architecture to meet the computation needs in a domain, such as the matrix multiplication in machine learning.
+
+Several machine types
+● Network throughput scales 2 Gbps per vCPU (small exceptions)
+● Theoretical max of 200 Gbps with 176 vCPU 
+A vCPU is equal to 1 hardware hyper-thread
+
+Storage: Standard, SSD, or local SSD. So basically, do you want the standard spinning hard disk drives (HDDs), or flash memory solid-state drives (SSDs)? Both of these options provide the same amount of capacity in terms of disk size when choosing a persistent disk. Therefore, the question really is about performance versus cost, because there's a different pricing structure
+
+Networking
+● Auto, custom networks
+● Inbound/outbound firewall rules
+  ○ IP based
+  ○ Instance/group tags
+● Regional HTTPS load balancing
+● Network load balancing
+  ○ Does not require pre-warming
+● Global and multi-regional subnetworks
 
 <img width="1200" src="https://user-images.githubusercontent.com/59575502/191698038-59fd2dc5-5eba-4482-a684-81ea904be6bc.png">
 
@@ -202,6 +226,53 @@ Predefined or custom machine types:
 
 <img width="1200" src="https://user-images.githubusercontent.com/59575502/191705232-5d34d8b9-db38-44df-aa11-4a0b835b2f9b.png">
 
+When you define all the properties of an instance and click Create, the instance enters the provisioning state. Here the resources such as CPU, memory, and disks are being reserved for the instance, but the instance itself isn’t running yet. Next, the instance moves to the staging state where resources have been acquired and the instance is prepared for launch. Specifically, in this state, Compute Engine is adding IP addresses, booting up the system image, and booting up the system.
+After the instance starts running, it will go through pre-configured startup scripts and enable SSH or RDP access. Now, you can do several things while your instance is running. For example, you can live migrate your virtual machine to another host in the same zone instead of requiring your instance to be rebooted. This allows Google Cloud to perform maintenance that is integral to keeping the infrastructure protected and reliable, without interrupting any of your VMs. While your instance is running, you can also move your VM to a different zone, take a snapshot of the VM’s persistent disk, export the system image, or reconfigure metadata. We will explore some of these tasks in later labs.
+Some actions require you to stop your virtual machine; for example, if you want to upgrade your machine by adding more CPU. When the instance enters this state, it will go through pre-configured shutdown scripts and end in the terminated state. From
+this state, you can choose to either restart the instance, which would bring it back to its provisioning state, or delete it.
+You also have the option to reset a VM, which is similar to pressing the reset button on your computer. This actions wipes the memory contents of the machine and resets the virtual machine to its initial state. The instance remains in the running state through the reset.
+The VM may also enter a repairing state. Repairing occurs when the VM encounters an internal error or the underlying machine is unavailable due to maintenance. During this time, the VM is unusable. You are not billed when a VM is in repair. VMs are not covered by the Service level agreement (SLA) while they are in repair. If repair succeeds, the VM returns to one of the above states.
+Finally, when you suspend the VM, it enters in the suspending state, before being suspended. You can then resume the VM or delete it.
+
+<img width="1200" src="assets/module_2/vm_options.png">
+
+Availability Policy: 
+Called "scheduling options" in SDK/API
+  Automatic restart
+    ● Automatic VM restart due to crash or maintenance event
+      ○ Not preemption or a user-initiated terminate On host maintenance
+    ● Determines whether host is live-migrated or terminated due to a maintenance event. Live migration is the default.
+    Live migration
+    ● During maintenance event, VM is migrated to different hardware without interruption.
+    ● Metadata indicates occurrence of live migration.
+
+Pathces:
+Managing patches effectively is a great way to keep your infrastructure up-to-date and reduce the risk of security vulnerabilities. 
+Use OS patch management to apply operating system patches across a set of Compute Engine VM instances. Long-running VMs require periodic system updates to protect against defects and vulnerabilities.
+The OS patch management service has two main components:
+  ● Patch compliance reporting, which provides insights on the patch status of your VM instances across Windows and Linux distributions. Along with the insights, you can also view recommendations for your VM instances.
+  ● Patch deployment, which automates the operating system and software patch update process. A patch deployment schedules patch jobs. A patch job runs across VM instances and applies patches.
+
+- Create patch approvals. You can select what patches to apply to your system from the full set of updates available for the specific operating system.
+- Set up flexible scheduling. You can choose when to run patch updates (one-time and recurring schedules).
+- Apply advanced patch configuration settings. You can customize your patches by adding configurations such as pre and post patching scripts.
+
+The image on a stopped VM cannot be changed
+
+#### Create a VM
+You can use the Cloud Console, the Cloud Shell command line, or the RESTful API
+In the cloud shell you can use the gcloud command. It is better always to start from the console to avoid errors while typing. Vm instances to check the actual VMs running.
+
+Pricing:
+- VM are billed in 1 second increments
+- The cost is based on machine type. The more CPUs and memory used, the higher the cost.
+- Google offers discounts for sustained usage.
+- VMs are charged for a minimum of 1 minute of use.
+- Preemptible VMs can save you up to 80 percent of the cost of a VM.
+
+Machine family TODO:
+- General porpouse most flexible vCPU, cost optimized, day to day computing at low cost.
+- 
 <div align="center">
 
 #### [Machine types](https://cloud.google.com/compute/docs/machine-types)
@@ -242,6 +313,8 @@ Confidential VMs allows you to encrypt data in use, while it's been processed.
 - Compute-heavy workloads, with high memory capacity, high throughput, and support for parallel workloads.
 
 #### What is an image?
+They are copies of disk contents, used to create VM.
+
 - Boot loader
 - OS
 - File system structure
